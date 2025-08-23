@@ -1,11 +1,30 @@
 
-  # Brutal Minimalist Landing Page
+# Cyber-Brutal Minimalist Landing Page
 
-  This page was built using [Figma](https://www.figma.com/make/7dDjHj8nAlSfYagInHvlve/Brutal-Minimalist-Landing-Page?node-id=0-1&p=f&fullscreen=1).
+A clean, ultra-lightweight landing page template designed in Figma and built with modern tooling—perfect for businesses and freelancers in need of a fast, elegant, hassle-free web presence.
+<sub>This page was built using [Figma](https://www.figma.com/make/7dDjHj8nAlSfYagInHvlve/Brutal-Minimalist-Landing-Page?node-id=0-1&p=f&fullscreen=1).</sub>
+---
 
-  ## Running the code
+##  Key Features
 
-  Run `npm i` to install the dependencies.
+- **Brutal Minimalism**: Stripped-down design that eliminates distractions and focuses on core messaging.
+- **Figma-Based UI**: Fully designed in Figma for easy visual edits and iterations.
+- **Modern Tech Stack**: Built with TypeScript and Vite, ensuring lightning-fast development and performance.
+- **Easy Customization**: Change colors, content, sections—all with minimal fuss.
 
-  Run `npm run dev` to start the development server.
-  
+---
+
+##  Demo
+
+Check out the live demo here: [View it online](https://artgolwebdev.github.io/LP01/) *(Ensure the link is working and clearly visible.)*
+
+---
+
+##  Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Launch development server
+npm run dev
