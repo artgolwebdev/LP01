@@ -1,7 +1,7 @@
 
   # Brutal Minimalist Landing Page
 
-  https://www.figma.com/make/7dDjHj8nAlSfYagInHvlve/Brutal-Minimalist-Landing-Page?node-id=0-1&p=f&fullscreen=1
+  This page was built using [Figma](https://www.figma.com/make/7dDjHj8nAlSfYagInHvlve/Brutal-Minimalist-Landing-Page?node-id=0-1&p=f&fullscreen=1).
 
   ## Running the code
 
