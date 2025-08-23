@@ -1,7 +1,5 @@
 
 # Cyber-Brutal Minimalist Landing Page
-
-A clean, ultra-lightweight landing page template designed in Figma and built with modern tooling—perfect for businesses and freelancers in need of a fast, elegant, hassle-free web presence.
 <sub>This page was built using [Figma](https://www.figma.com/make/7dDjHj8nAlSfYagInHvlve/Brutal-Minimalist-Landing-Page?node-id=0-1&p=f&fullscreen=1).</sub>
 ---
 
