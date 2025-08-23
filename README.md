@@ -6,8 +6,8 @@ Minimalist landing with brutal cyber inpired design
 
 
 ##  Demo
-
-Check out the live demo here: [View it online](https://artgolwebdev.github.io/LP01/) *(Ensure the link is working and clearly visible.)*
+![Screenshot](/cyber-brutal.png)
+Check out the live demo here: [View it online](https://artgolwebdev.github.io/LP01/)
 
 ---
 
