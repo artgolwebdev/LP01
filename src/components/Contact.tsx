@@ -1,18 +1,68 @@
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [statusMessage, setStatusMessage] = useState('');
+
   const handleHover = () => {
     if ((window as any).cyberSounds) {
       (window as any).cyberSounds.hover();
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if ((window as any).cyberSounds) {
       (window as any).cyberSounds.click();
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setStatusMessage('');
+
+    try {
+      const response = await fetch('/api/ContactFormHandler.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitStatus('success');
+        setStatusMessage(result.message);
+        setFormData({ name: '', email: '', phone: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+        setStatusMessage(result.message);
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+      setStatusMessage('Network error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -90,31 +140,67 @@ export default function Contact() {
             
             <form className="space-y-6" onSubmit={handleSubmit}>
               <Input 
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
                 placeholder="YOUR NAME" 
                 className="cyber-button bg-background text-foreground border-2 border-background placeholder:text-foreground/50 uppercase tracking-wider"
                 style={{ fontFamily: 'var(--font-cyber-mono)' }}
                 onFocus={handleHover}
+                required
               />
               <Input 
+                name="email"
                 type="email" 
+                value={formData.email}
+                onChange={handleInputChange}
                 placeholder="YOUR EMAIL" 
+                className="cyber-button bg-background text-foreground border-2 border-background placeholder:text-foreground/50 uppercase tracking-wider"
+                style={{ fontFamily: 'var(--font-cyber-mono)' }}
+                onFocus={handleHover}
+                required
+              />
+              <Input 
+                name="phone"
+                type="tel" 
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="YOUR PHONE (OPTIONAL)" 
                 className="cyber-button bg-background text-foreground border-2 border-background placeholder:text-foreground/50 uppercase tracking-wider"
                 style={{ fontFamily: 'var(--font-cyber-mono)' }}
                 onFocus={handleHover}
               />
               <Textarea 
-                placeholder="YOUR MESSAGE" 
+                name="message"
+                value={formData.message}
+                onChange={handleInputChange}
+                placeholder="YOUR MESSAGE (OPTIONAL)" 
                 className="cyber-button bg-background text-foreground border-2 border-background placeholder:text-foreground/50 uppercase tracking-wider min-h-32"
                 style={{ fontFamily: 'var(--font-cyber-mono)' }}
                 onFocus={handleHover}
               />
+              
+              {/* Status Message */}
+              {submitStatus !== 'idle' && (
+                <div className={`p-4 rounded border-2 ${
+                  submitStatus === 'success' 
+                    ? 'border-green-400 text-green-400 bg-green-400/10' 
+                    : 'border-red-400 text-red-400 bg-red-400/10'
+                }`}>
+                  <p className="uppercase tracking-wider font-mono text-sm">
+                    {statusMessage}
+                  </p>
+                </div>
+              )}
+              
               <Button 
                 type="submit"
+                disabled={isSubmitting}
                 onMouseEnter={handleHover}
-                className="cyber-button w-full bg-background text-foreground hover:bg-background/90 border-2 border-background uppercase tracking-widest font-black cyber-scan"
+                className="cyber-button w-full bg-background text-foreground hover:bg-background/90 border-2 border-background uppercase tracking-widest font-black cyber-scan disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ fontFamily: 'var(--font-cyber-primary)' }}
               >
-                TRANSMIT
+                {isSubmitting ? 'TRANSMITTING...' : 'TRANSMIT'}
               </Button>
             </form>
           </div>
