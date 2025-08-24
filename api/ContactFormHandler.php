@@ -40,6 +40,15 @@ class ContactFormHandler
      */
     public function __construct()
     {
+        // Enable error reporting for debugging
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        ini_set('log_errors', 1);
+        
+        // Set custom error log for Windows/XAMPP
+        $logPath = __DIR__ . '/contact-form.log';
+        ini_set('error_log', $logPath);
+        
         // Load configuration from config.php
         $this->adminEmail = ADMIN_EMAIL;
         $this->mailgunApiKey = MAILGUN_API_KEY;
