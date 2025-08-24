@@ -66,6 +66,12 @@ class ContactFormHandler
     public function handleRequest()
     {
         try {
+            // Debug endpoint
+            if (isset($_GET['debug']) && $_GET['debug'] === 'config') {
+                $this->debugConfig();
+                return;
+            }
+            
             // Check if it's a POST request
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 $this->sendResponse(405, 'Method not allowed');
@@ -246,7 +252,25 @@ class ContactFormHandler
      */
     private function sendMailgunEmail($to, $subject, $body, $replyTo = null, $replyToName = null)
     {
+        // Debug: Check configuration values
+        error_log("Mailgun Debug - Domain: " . $this->mailgunDomain);
+        error_log("Mailgun Debug - API Key: " . substr($this->mailgunApiKey, 0, 10) . "...");
+        error_log("Mailgun Debug - From Email: " . $this->fromEmail);
+        
+        // Validate domain format
+        if (empty($this->mailgunDomain) || $this->mailgunDomain === 'your-domain.com') {
+            error_log("Mailgun Error: Invalid domain configuration");
+            return false;
+        }
+        
+        // Validate API key
+        if (empty($this->mailgunApiKey) || $this->mailgunApiKey === 'your-mailgun-api-key') {
+            error_log("Mailgun Error: Invalid API key configuration");
+            return false;
+        }
+        
         $url = "https://api.mailgun.net/v3/{$this->mailgunDomain}/messages";
+        error_log("Mailgun Debug - URL: " . $url);
         
         $postData = [
             'from' => "{$this->fromName} <{$this->fromEmail}>",
@@ -259,18 +283,41 @@ class ContactFormHandler
             $postData['h:Reply-To'] = $replyToName ? "{$replyToName} <{$replyTo}>" : $replyTo;
         }
         
+        // Debug: Log post data (without sensitive info)
+        error_log("Mailgun Debug - Post Data: " . json_encode(array_merge($postData, ['text' => '[MESSAGE CONTENT HIDDEN]'])));
+        
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Authorization: Basic ' . base64_encode('api:' . $this->mailgunApiKey)
+            'Authorization: Basic ' . base64_encode('api:' . $this->mailgunApiKey),
+            'Content-Type: application/x-www-form-urlencoded'
         ]);
         
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_close($ch);
+        
+        // Debug: Log response details
+        error_log("Mailgun Debug - HTTP Code: " . $httpCode);
+        error_log("Mailgun Debug - Response: " . $response);
+        if ($curlError) {
+            error_log("Mailgun Debug - cURL Error: " . $curlError);
+        }
+        
+        // Check for specific error codes
+        if ($httpCode === 401) {
+            error_log("Mailgun Error: Unauthorized - Check API key");
+        } elseif ($httpCode === 403) {
+            error_log("Mailgun Error: Forbidden - Check domain or API key");
+        } elseif ($httpCode === 404) {
+            error_log("Mailgun Error: Domain not found - Check domain configuration");
+        }
         
         return $httpCode === 200;
     }
@@ -293,6 +340,26 @@ class ContactFormHandler
         
         echo json_encode($response);
         exit();
+    }
+    
+    /**
+     * Debug method to test configuration
+     */
+    public function debugConfig()
+    {
+        $debug = [
+            'admin_email' => $this->adminEmail,
+            'from_email' => $this->fromEmail,
+            'from_name' => $this->fromName,
+            'mailgun_domain' => $this->mailgunDomain,
+            'mailgun_api_key' => substr($this->mailgunApiKey, 0, 10) . '...',
+            'env_file_exists' => file_exists(__DIR__ . '/../.env'),
+            'php_version' => PHP_VERSION,
+            'curl_enabled' => function_exists('curl_init'),
+            'server_time' => date('Y-m-d H:i:s')
+        ];
+        
+        $this->sendResponse(200, 'Configuration debug info', $debug);
     }
 }
 
