@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useScrollAnimation, useStaggeredAnimation } from "./hooks/useScrollAnimation";
-import { unsplash_tool } from "../unsplash_tool";
+import { getGalleryImagePath, handleImageError, handleImageLoad } from "../utils/imageUtils";
 
 const services = [
   {
@@ -245,18 +245,15 @@ export default function About() {
                 onMouseEnter={handleHover}
               >
                 {item.type === 'image' ? (
-                  <div className="w-full h-full bg-gradient-to-br from-cyan-400/20 to-magenta-400/20 flex items-center justify-center">
-                    <div className="cyber-scan w-full h-full bg-muted/20 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="w-16 h-16 bg-background/30 rounded-full mx-auto mb-4 cyber-glow"></div>
-                        <p 
-                          className="text-xs uppercase tracking-wider cyber-flicker"
-                          style={{ fontFamily: 'var(--font-cyber-mono)' }}
-                        >
-                          {item.query?.replace(' ', '_').toUpperCase()}
-                        </p>
-                      </div>
-                    </div>
+                  <div className="w-full h-full relative overflow-hidden">
+                    <img 
+                      src={getGalleryImagePath(item.query || '')}
+                      alt={item.query}
+                      className="w-full h-full object-cover cyber-scan"
+                      onError={handleImageError}
+                      onLoad={handleImageLoad}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 to-magenta-400/10 pointer-events-none"></div>
                   </div>
                 ) : (
                   <div className="w-full h-full p-4 flex flex-col justify-center bg-gradient-to-br from-background/10 to-transparent">

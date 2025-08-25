@@ -1,0 +1,51 @@
+<svg width="1200" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mapGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#1a1a1a;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#mapGradient)"/>
+  
+  <!-- Grid overlay for map aesthetic -->
+  <g opacity="0.3">
+    <line x1="0" y1="50" x2="1200" y2="50" stroke="#00ffff" stroke-width="1"/>
+    <line x1="0" y1="100" x2="1200" y2="100" stroke="#00ffff" stroke-width="1"/>
+    <line x1="0" y1="150" x2="1200" y2="150" stroke="#00ffff" stroke-width="1"/>
+    <line x1="0" y1="200" x2="1200" y2="200" stroke="#00ffff" stroke-width="1"/>
+    <line x1="0" y1="250" x2="1200" y2="250" stroke="#00ffff" stroke-width="1"/>
+    <line x1="0" y1="300" x2="1200" y2="300" stroke="#00ffff" stroke-width="1"/>
+    <line x1="0" y1="350" x2="1200" y2="350" stroke="#00ffff" stroke-width="1"/>
+    
+    <line x1="100" y1="0" x2="100" y2="400" stroke="#00ffff" stroke-width="1"/>
+    <line x1="200" y1="0" x2="200" y2="400" stroke="#00ffff" stroke-width="1"/>
+    <line x1="300" y1="0" x2="300" y2="400" stroke="#00ffff" stroke-width="1"/>
+    <line x1="400" y1="0" x2="400" y2="400" stroke="#00ffff" stroke-width="1"/>
+    <line x1="500" y1="0" x2="500" y2="400" stroke="#00ffff" stroke-width="1"/>
+    <line x1="600" y1="0" x2="600" y2="400" stroke="#00ffff" stroke-width="1"/>
+    <line x1="700" y1="0" x2="700" y2="400" stroke="#00ffff" stroke-width="1"/>
+    <line x1="800" y1="0" x2="800" y2="400" stroke="#00ffff" stroke-width="1"/>
+    <line x1="900" y1="0" x2="900" y2="400" stroke="#00ffff" stroke-width="1"/>
+    <line x1="1000" y1="0" x2="1000" y2="400" stroke="#00ffff" stroke-width="1"/>
+    <line x1="1100" y1="0" x2="1100" y2="400" stroke="#00ffff" stroke-width="1"/>
+  </g>
+  
+  <!-- Map border -->
+  <rect x="0" y="0" width="1200" height="400" fill="none" stroke="#00ffff" stroke-width="3" opacity="0.8"/>
+  
+  <!-- Map title -->
+  <text x="600" y="180" font-family="monospace" font-size="32" fill="#00ffff" text-anchor="middle" font-weight="bold">CYBER DISTRICT MAP</text>
+  <text x="600" y="220" font-family="monospace" font-size="18" fill="#ff00ff" text-anchor="middle">1200x400px - FUTURISTIC CITY LAYOUT</text>
+  <text x="600" y="250" font-family="monospace" font-size="14" fill="#ffff00" text-anchor="middle">PLACEHOLDER MAP - INTEGRATE WITH MAPPING API</text>
+  
+  <!-- Location markers -->
+  <circle cx="300" cy="300" r="8" fill="#ff00ff" opacity="0.8"/>
+  <text x="300" y="320" font-family="monospace" font-size="10" fill="#ff00ff" text-anchor="middle">NEON DISTRICT</text>
+  
+  <circle cx="600" cy="250" r="8" fill="#00ff00" opacity="0.8"/>
+  <text x="600" y="270" font-family="monospace" font-size="10" fill="#00ff00" text-anchor="middle">CYBER CENTER</text>
+  
+  <circle cx="900" cy="280" r="8" fill="#ffff00" opacity="0.8"/>
+  <text x="900" y="300" font-family="monospace" font-size="10" fill="#ffff00" text-anchor="middle">TECH ZONE</text>
+</svg>

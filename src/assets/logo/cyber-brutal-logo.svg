@@ -1,0 +1,26 @@
+<svg width="200" height="80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ffff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff00ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffff00;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="200" height="80" fill="none" stroke="#00ffff" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Logo text -->
+  <text x="100" y="35" font-family="monospace" font-size="16" fill="url(#logoGradient)" text-anchor="middle" font-weight="bold">CYBER</text>
+  <text x="100" y="55" font-family="monospace" font-size="16" fill="url(#logoGradient)" text-anchor="middle" font-weight="bold">BRUTAL</text>
+  
+  <!-- Cyber elements -->
+  <rect x="10" y="20" width="4" height="4" fill="#00ffff" opacity="0.8"/>
+  <rect x="186" y="20" width="4" height="4" fill="#ff00ff" opacity="0.8"/>
+  <rect x="10" y="56" width="4" height="4" fill="#ffff00" opacity="0.8"/>
+  <rect x="186" y="56" width="4" height="4" fill="#00ff00" opacity="0.8"/>
+  
+  <!-- Grid lines -->
+  <line x1="0" y1="40" x2="200" y2="40" stroke="#00ffff" stroke-width="1" opacity="0.2"/>
+  <line x1="100" y1="0" x2="100" y2="80" stroke="#ff00ff" stroke-width="1" opacity="0.2"/>
+</svg>

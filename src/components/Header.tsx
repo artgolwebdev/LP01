@@ -1,6 +1,7 @@
 import { Button } from "./ui/button";
 import { useScrollSections } from "./hooks/useScrollSections";
 import { motion } from "motion/react";
+import { getLogoPath, handleImageError, handleImageLoad } from "../utils/imageUtils";
 
 export default function Header() {
   const { activeSection, scrollProgress, isScrolled, sections, scrollToSection } = useScrollSections();
@@ -49,38 +50,23 @@ export default function Header() {
         <nav className="flex items-center justify-between">
           {/* Logo with morphing effect */}
           <motion.div 
-            className="text-2xl font-black uppercase tracking-wider cyber-glow cyber-glitch interactive-element"
-            style={{ 
-              fontFamily: 'var(--font-cyber-display)',
-              color: activeSection.color,
-              textShadow: `0 0 20px ${activeSection.color}`,
-            }}
-            data-text="CYBERΒRUTAL"
+            className="cyber-glow cyber-glitch interactive-element"
             onMouseEnter={handleHover}
             animate={{
               scale: isScrolled ? 0.9 : 1,
             }}
             transition={{ duration: 0.3 }}
           >
-            <motion.span
-              animate={{
-                color: activeSection.color,
+            <img 
+              src={getLogoPath()}
+              alt="Cyber Brutal"
+              className="h-12 w-auto"
+              style={{
+                filter: `drop-shadow(0 0 20px ${activeSection.color})`,
               }}
-              transition={{ duration: 0.5 }}
-            >
-              CYBER
-            </motion.span>
-            <span className="bg-foreground text-background px-2 mx-1 cyber-scan">
-              Β
-            </span>
-            <motion.span
-              animate={{
-                color: activeSection.color,
-              }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              RUTAL
-            </motion.span>
+              onError={handleImageError}
+              onLoad={handleImageLoad}
+            />
           </motion.div>
           
           {/* Navigation with active states */}
