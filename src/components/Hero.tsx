@@ -14,8 +14,9 @@ export default function Hero() {
       className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden"
     >
       {/* Background Video with Slow Motion Effect */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden">
+      <div className="absolute inset-0 w-full h-full overflow-hidden" id="hero-video-container">
         <video
+          id="hero-video"
           className="w-full h-full"
           autoPlay
           muted

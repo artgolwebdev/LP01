@@ -5657,3 +5657,23 @@ html {
     opacity: 0;
   }
 }
+
+
+#hero-video{
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: fill;
+} 
+
+
+/* Mobile-specific video styling for hero section */
+@media (max-width: 768px) {
+  #hero-video-container{
+    background-color: #0a0a0a;
+  }
+  #hero-video {
+    min-height: 70%!important;
+  }
+}
