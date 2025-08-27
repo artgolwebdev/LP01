@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function Footer() {
   return (
     <footer className="bg-foreground text-background py-16">
@@ -8,7 +10,7 @@ export default function Footer() {
               className="text-2xl font-black uppercase tracking-widest mb-6 cyber-glow"
               style={{ fontFamily: 'var(--font-cyber-display)' }}
             >
-              CYBERΒRUTAL
+              CYBERCITY
             </h3>
             <p 
               className="uppercase tracking-wider text-background/80"
@@ -97,7 +99,7 @@ export default function Footer() {
               className="uppercase tracking-wider text-background/60"
               style={{ fontFamily: 'var(--font-cyber-mono)' }}
             >
-              © 2025 CYBERΒRUTAL. ALL RIGHTS RESERVED.
+              © 2025 CYBERCITY. ALL RIGHTS RESERVED.
             </p>
             <div className="w-24 h-1 bg-background cyber-glow"></div>
           </div>

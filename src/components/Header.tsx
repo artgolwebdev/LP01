@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { useScrollSections } from "./hooks/useScrollSections";
-import { getLogoPath } from "../utils/imageUtils";
 
 export default function Header() {
   const { activeSection, scrollProgress, isScrolled, sections, scrollToSection } = useScrollSections();
@@ -19,6 +18,14 @@ export default function Header() {
     }
     scrollToSection(sectionId);
   };
+
+  // Cyber color palette for hover effects
+  const cyberColors = [
+    'var(--cyber-cyan)',    // #0ff
+    'var(--cyber-magenta)', // #f0f
+    'var(--cyber-yellow)',  // #ff0
+    'var(--cyber-green)',   // #0f0
+  ];
 
   return (
     <motion.header 
@@ -50,21 +57,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
           {/* Logo with morphing effect */}
-          <motion.div 
-            className="cyber-glow cyber-glitch interactive-element h-12 w-auto"
-            onMouseEnter={handleHover}
-            animate={{
-              scale: isScrolled ? 0.9 : 1,
-            }}
-            transition={{ duration: 0.3 }}
-            style={{
-              backgroundImage: `url(${getLogoPath()})`,
-              backgroundSize: 'contain',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              filter: `drop-shadow(0 0 20px ${activeSection.color})`,
-            }}
-          />
+       
 
           {/* Logo with morphing effect */}
           <motion.div 
@@ -74,12 +67,16 @@ export default function Header() {
               color: activeSection.color,
               textShadow: `0 0 20px ${activeSection.color}`,
             }}
-            data-text="CYBERΒRUTAL"
+            data-text="CYBERCITY"
             onMouseEnter={handleHover}
             animate={{
               scale: isScrolled ? 0.9 : 1,
             }}
             transition={{ duration: 0.3 }}
+            whileHover={{
+              textShadow: `0 0 30px ${activeSection.color}, 0 0 40px ${activeSection.color}`,
+              scale: 1.05,
+            }}
           >
             <motion.span
               animate={{
@@ -90,7 +87,7 @@ export default function Header() {
               CYBER
             </motion.span>
             <span className="bg-foreground text-background px-2 mx-1 cyber-scan">
-              Β
+              C
             </span>
             <motion.span
               animate={{
@@ -99,7 +96,7 @@ export default function Header() {
               }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              RUTAL
+              ITY
             </motion.span>
        
           </motion.div>
@@ -122,6 +119,15 @@ export default function Header() {
                   scale: activeSection.id === section.id ? 1.1 : 1,
                 }}
                 transition={{ duration: 0.3 }}
+                whileHover={{
+                  color: cyberColors[index % cyberColors.length],
+                  textShadow: `0 0 15px ${cyberColors[index % cyberColors.length]}, 0 0 25px ${cyberColors[index % cyberColors.length]}`,
+                  scale: 1.1,
+                  y: -2,
+                }}
+                whileTap={{
+                  scale: 0.95,
+                }}
               >
                 <span className="relative z-10">{section.name}</span>
                 
@@ -137,10 +143,25 @@ export default function Header() {
                   />
                 )}
                 
-                {/* Hover effect */}
+                {/* Hover effect background */}
                 <motion.div
-                  className="absolute inset-0 opacity-0 hover:opacity-20 transition-opacity duration-300"
-                  style={{ backgroundColor: section.color }}
+                  className="absolute inset-0 opacity-0 transition-opacity duration-300"
+                  style={{ backgroundColor: cyberColors[index % cyberColors.length] }}
+                  whileHover={{
+                    opacity: 0.1,
+                  }}
+                />
+                
+                {/* Glow effect on hover */}
+                <motion.div
+                  className="absolute inset-0 rounded opacity-0 transition-opacity duration-300"
+                  style={{ 
+                    background: `radial-gradient(circle, ${cyberColors[index % cyberColors.length]}20 0%, transparent 70%)`,
+                    filter: 'blur(8px)',
+                  }}
+                  whileHover={{
+                    opacity: 1,
+                  }}
                 />
               </motion.button>
             ))}
@@ -164,6 +185,15 @@ export default function Header() {
                 borderColor: activeSection.color,
                 boxShadow: `0 0 15px ${activeSection.color}40`,
               }}
+              whileHover={{
+                boxShadow: `0 0 25px ${activeSection.color}, 0 0 35px ${activeSection.color}80`,
+                scale: 1.05,
+                y: -3,
+              }}
+              whileTap={{
+                scale: 0.95,
+                y: 0,
+              }}
             >
               <motion.span
                 animate={{
@@ -182,6 +212,18 @@ export default function Header() {
                   x: activeSection.id === 'cta' ? 0 : '-100%',
                 }}
                 transition={{ duration: 0.5 }}
+              />
+              
+              {/* Enhanced glow effect */}
+              <motion.div
+                className="absolute inset-0 opacity-0 transition-opacity duration-300"
+                style={{ 
+                  background: `radial-gradient(circle, ${activeSection.color}40 0%, transparent 70%)`,
+                  filter: 'blur(12px)',
+                }}
+                whileHover={{
+                  opacity: 1,
+                }}
               />
             </Button>
           </motion.div>
@@ -211,7 +253,11 @@ export default function Header() {
                 boxShadow: activeSection.id === section.id ? `0 0 10px ${section.color}` : 'none',
               }}
               transition={{ duration: 0.3 }}
-              whileHover={{ scale: 1.3 }}
+              whileHover={{ 
+                scale: 1.3,
+                boxShadow: `0 0 15px ${cyberColors[index % cyberColors.length]}`,
+                borderColor: cyberColors[index % cyberColors.length],
+              }}
               whileTap={{ scale: 0.9 }}
             />
           ))}

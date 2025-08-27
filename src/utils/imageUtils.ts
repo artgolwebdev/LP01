@@ -3,7 +3,7 @@ import React from 'react';
 // Import all assets
 import neonCityScene from '../assets/video/neot-city-scene.mp4';
 import heroVideoPoster from '../assets/video/hero-video-poster.svg';
-import cyberBrutalLogo from '../assets/logo/cyber-brutal-logo.svg';
+//import cyberCityLogo from '../assets/logo/cyber-city-logo.svg';
 import cyberDistrictMap from '../assets/map/cyber-district-map.svg';
 
 // Import gallery images
@@ -45,9 +45,6 @@ export const getMapImagePath = (): string => {
   return cyberDistrictMap;
 };
 
-export const getLogoPath = (): string => {
-  return cyberBrutalLogo;
-};
 
 export const getHeroVideoPosterPath = (): string => {
   return heroVideoPoster;

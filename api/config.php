@@ -44,7 +44,7 @@ function getEnvVar($key, $default = null) {
 // Email Configuration
 define('ADMIN_EMAIL', getEnvVar('ADMIN_EMAIL', 'admin@yourdomain.com'));
 define('FROM_EMAIL', getEnvVar('FROM_EMAIL', 'noreply@yourdomain.com'));
-define('FROM_NAME', getEnvVar('FROM_NAME', 'Cyber Brutal Contact Form'));
+define('FROM_NAME', getEnvVar('FROM_NAME', 'Cyber City Contact Form'));
 
 // Mailgun Configuration
 define('MAILGUN_API_KEY', getEnvVar('MAILGUN_API_KEY', 'your-mailgun-api-key'));

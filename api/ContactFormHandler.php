@@ -188,7 +188,7 @@ class ContactFormHandler
      */
     private function sendAdminEmail($data)
     {
-        $subject = 'New Contact Form Submission - Cyber Brutal';
+        $subject = 'New Contact Form Submission - Cyber City';
         
         $body = $this->buildAdminEmailBody($data);
         
@@ -206,7 +206,7 @@ class ContactFormHandler
      */
     private function sendThankYouEmail($data)
     {
-        $subject = 'Thank you for contacting Cyber Brutal';
+        $subject = 'Thank you for contacting Cyber City';
         
         $body = $this->buildThankYouEmailBody($data);
         
@@ -246,10 +246,10 @@ class ContactFormHandler
     private function buildThankYouEmailBody($data)
     {
         $body = "Dear " . htmlspecialchars($data['name']) . ",\n\n";
-        $body .= "Thank you for contacting Cyber Brutal!\n\n";
+        $body .= "Thank you for contacting Cyber City!\n\n";
         $body .= "We have received your message and will get back to you as soon as possible.\n\n";
         $body .= "Best regards,\n";
-        $body .= "The Cyber Brutal Team\n\n";
+        $body .= "The Cyber City Team\n\n";
         $body .= "---\n";
         $body .= "This is an automated response. Please do not reply to this email.";
         

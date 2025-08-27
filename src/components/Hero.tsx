@@ -49,12 +49,12 @@ export default function Hero() {
           <h1 
             className="text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-wider leading-none cyber-glow cyber-glitch interactive-element"
             style={{ fontFamily: 'var(--font-cyber-display)' }}
-            data-text="CYBER ΒRUTAL"
+            data-text="CYBER CITY"
             onMouseEnter={handleHover}
           >
             CYBER
             <br />
-            <span className="bg-foreground text-background px-4 cyber-scan">ΒRUTAL</span>
+            <span className="bg-foreground text-background px-4 cyber-scan">CITY</span>
           </h1>
           
           <p 
