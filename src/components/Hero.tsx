@@ -1,3 +1,6 @@
+import React from 'react';
+import { getNeonCityScenePath } from "../utils/imageUtils";
+
 export default function Hero() {
   const handleHover = () => {
     if ((window as any).cyberSounds) {
@@ -6,7 +9,40 @@ export default function Hero() {
   };
 
   return (
-    <section id="hero" className="min-h-screen flex items-center justify-center bg-background relative matrix-rain">
+    <section 
+      id="hero" 
+      className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden"
+    >
+      {/* Background Video with Slow Motion Effect */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <video
+          className="w-full h-full"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            minWidth: '100%',
+            minHeight: '100%',
+            width: 'auto',
+            height: 'auto',
+            objectFit : 'fill'
+          }}
+        >
+          <source src={getNeonCityScenePath()} type="video/mp4" />
+
+          {/* Fallback to image if video not available */}
+          <img
+            src={getNeonCityScenePath()}
+            alt="Neon City Scene"
+            className="w-full h-full"
+          />
+        </video>
+      </div>
+      
+      {/* Background overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/40 matrix-rain"></div>
+      
       <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
         <div className="space-y-8">
           <h1 
@@ -24,17 +60,17 @@ export default function Hero() {
             className="text-xl md:text-2xl max-w-2xl mx-auto uppercase tracking-wider"
             style={{ fontFamily: 'var(--font-cyber-secondary)' }}
           >
-            <span className="color-shift interactive-element" onMouseEnter={handleHover}>
+            <span className="color-shift interactive-element text-background cyber-glow" onMouseEnter={handleHover}>
               MINIMALISTIC.
             </span>{' '}
-            <span className="color-shift interactive-element" onMouseEnter={handleHover}>
+            <span className="color-shift interactive-element text-background cyber-glow" onMouseEnter={handleHover}>
               FUTURISTIC.
             </span>{' '}
-            <span className="color-shift interactive-element" onMouseEnter={handleHover}>
+            <span className="color-shift interactive-element text-background cyber-glow" onMouseEnter={handleHover}>
               UNCOMPROMISING.
             </span>
             <br />
-            <span className="cyber-flicker interactive-element" onMouseEnter={handleHover}>
+            <span className="cyber-flicker interactive-element text-background cyber-glow" onMouseEnter={handleHover}>
               DIGITAL EXPERIENCES THAT TRANSCEND
             </span>
           </p>

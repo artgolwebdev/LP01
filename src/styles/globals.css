@@ -2,6 +2,25 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Slow Motion Animation for Video Background */
+@keyframes slowMotion {
+  0% {
+    transform: scale(1.1) translate(0, 0);
+  }
+  25% {
+    transform: scale(1.1) translate(-2px, -1px);
+  }
+  50% {
+    transform: scale(1.1) translate(1px, -2px);
+  }
+  75% {
+    transform: scale(1.1) translate(-1px, 1px);
+  }
+  100% {
+    transform: scale(1.1) translate(0, 0);
+  }
+}
+
 :root {
   --font-size: 14px;
   --font-cyber-primary: 'Orbitron', monospace;
@@ -348,7 +367,6 @@
 
 /* Matrix Rain Effect */
 .matrix-rain {
-  position: relative;
   overflow: hidden;
 }
 
@@ -625,4 +643,11 @@ html {
 
 .perspective-1000 {
   perspective: 1000px;
+}
+
+/* Mobile-specific video styling for hero section */
+@media (max-width: 768px) {
+  #hero video {
+    object-fit: fill !important;
+  }
 }

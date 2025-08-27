@@ -1,7 +1,8 @@
-import { Button } from "./ui/button";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Button } from './ui/button';
 import { useScrollSections } from "./hooks/useScrollSections";
-import { motion } from "motion/react";
-import { getLogoPath, handleImageError, handleImageLoad } from "../utils/imageUtils";
+import { getLogoPath } from "../utils/imageUtils";
 
 export default function Header() {
   const { activeSection, scrollProgress, isScrolled, sections, scrollToSection } = useScrollSections();
@@ -21,7 +22,7 @@ export default function Header() {
 
   return (
     <motion.header 
-      className="sticky top-0 z-50 transition-all duration-500"
+      className="sticky top-0 z-50 transition-all duration-500 matrix-rain"
       style={{
         backgroundColor: isScrolled ? activeSection.bgColor : 'rgba(255, 255, 255, 0.8)',
         backdropFilter: 'blur(10px)',
@@ -50,24 +51,59 @@ export default function Header() {
         <nav className="flex items-center justify-between">
           {/* Logo with morphing effect */}
           <motion.div 
-            className="cyber-glow cyber-glitch interactive-element"
+            className="cyber-glow cyber-glitch interactive-element h-12 w-auto"
+            onMouseEnter={handleHover}
+            animate={{
+              scale: isScrolled ? 0.9 : 1,
+            }}
+            transition={{ duration: 0.3 }}
+            style={{
+              backgroundImage: `url(${getLogoPath()})`,
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              filter: `drop-shadow(0 0 20px ${activeSection.color})`,
+            }}
+          />
+
+          {/* Logo with morphing effect */}
+          <motion.div 
+            className="text-2xl font-black uppercase tracking-wider cyber-glow cyber-glitch interactive-element"
+            style={{ 
+              fontFamily: 'var(--font-cyber-display)',
+              color: activeSection.color,
+              textShadow: `0 0 20px ${activeSection.color}`,
+            }}
+            data-text="CYBERΒRUTAL"
             onMouseEnter={handleHover}
             animate={{
               scale: isScrolled ? 0.9 : 1,
             }}
             transition={{ duration: 0.3 }}
           >
-            <img 
-              src={getLogoPath()}
-              alt="Cyber Brutal"
-              className="h-12 w-auto"
-              style={{
-                filter: `drop-shadow(0 0 20px ${activeSection.color})`,
+            <motion.span
+              animate={{
+                color: activeSection.color,
               }}
-              onError={handleImageError}
-              onLoad={handleImageLoad}
-            />
+              transition={{ duration: 0.5 }}
+            >
+              CYBER
+            </motion.span>
+            <span className="bg-foreground text-background px-2 mx-1 cyber-scan">
+              Β
+            </span>
+            <motion.span
+              animate={{
+                color: activeSection.color,
+        
+              }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              RUTAL
+            </motion.span>
+       
           </motion.div>
+
           
           {/* Navigation with active states */}
           <div className="hidden md:flex items-center space-x-6">
@@ -154,7 +190,7 @@ export default function Header() {
 
       {/* Section indicator */}
       <motion.div
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 hidden lg:block"
+        className="absolute top-1/2 transform -translate-y-1/2 left-1"
         animate={{
           opacity: isScrolled ? 1 : 0,
         }}
@@ -179,22 +215,6 @@ export default function Header() {
               whileTap={{ scale: 0.9 }}
             />
           ))}
-        </div>
-      </motion.div>
-
-      {/* Mobile menu indicator */}
-      <motion.div
-        className="md:hidden absolute right-4 top-1/2 transform -translate-y-1/2"
-        animate={{
-          color: activeSection.color,
-        }}
-        transition={{ duration: 0.3 }}
-      >
-        <div 
-          className="text-sm font-black uppercase tracking-wider"
-          style={{ fontFamily: 'var(--font-cyber-mono)' }}
-        >
-          {activeSection.name}
         </div>
       </motion.div>
     </motion.header>

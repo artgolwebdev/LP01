@@ -1,6 +1,7 @@
+import React from "react";
 import { motion } from "motion/react";
 import { useScrollAnimation, useStaggeredAnimation } from "./hooks/useScrollAnimation";
-import { getGalleryImagePath, handleImageError, handleImageLoad } from "../utils/imageUtils";
+import { getGalleryImagePath } from "../utils/imageUtils";
 
 const services = [
   {
@@ -245,14 +246,15 @@ export default function About() {
                 onMouseEnter={handleHover}
               >
                 {item.type === 'image' ? (
-                  <div className="w-full h-full relative overflow-hidden">
-                    <img 
-                      src={getGalleryImagePath(item.query || '')}
-                      alt={item.query}
-                      className="w-full h-full object-cover cyber-scan"
-                      onError={handleImageError}
-                      onLoad={handleImageLoad}
-                    />
+                  <div 
+                    className="w-full h-full relative overflow-hidden cyber-scan"
+                    style={{
+                      backgroundImage: `url(${getGalleryImagePath(item.query || '')})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat'
+                    }}
+                  >
                     <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 to-magenta-400/10 pointer-events-none"></div>
                   </div>
                 ) : (

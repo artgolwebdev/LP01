@@ -1,4 +1,6 @@
-// Image utility functions for handling placeholders and fallbacks
+import React from 'react';
+
+// Image and video utility functions for handling placeholders and fallbacks
 
 export const getGalleryImagePath = (query: string): string => {
   // Convert query to filename format
@@ -12,6 +14,22 @@ export const getMapImagePath = (): string => {
 
 export const getLogoPath = (): string => {
   return '/src/assets/logo/cyber-brutal-logo.svg';
+};
+
+export const getHeroVideoPath = (): string => {
+  return '/src/assets/video/hero-background.mp4';
+};
+
+export const getHeroVideoWebmPath = (): string => {
+  return '/src/assets/video/hero-background.webm';
+};
+
+export const getHeroVideoPosterPath = (): string => {
+  return '/src/assets/video/hero-video-poster.svg';
+};
+
+export const getNeonCityScenePath = (): string => {
+  return '/src/assets/video/neot-city-scene.mp4';
 };
 
 // Image loading error handler

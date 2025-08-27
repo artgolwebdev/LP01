@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Volume2, VolumeX } from 'lucide-react';
+import { useScrollSections } from './hooks/useScrollSections';
 
 export default function CyberAudio() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -8,6 +10,9 @@ export default function CyberAudio() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  
+  // Get active section for mobile menu indicator
+  const { activeSection } = useScrollSections();
 
   const createAmbientSound = () => {
     if (audioContextRef.current) {
@@ -138,27 +143,45 @@ export default function CyberAudio() {
   }, []);
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex gap-2">
-      <Button
-        onClick={toggleAudio}
-        size="sm"
-        variant="outline"
-        className="cyber-button bg-background/80 backdrop-blur-sm border-2 border-foreground hover:bg-foreground hover:text-background"
-        style={{ fontFamily: 'var(--font-cyber-mono)' }}
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+      {/* Mobile menu indicator */}
+      <motion.div
+        className="md:hidden mb-2"
+        animate={{
+          color: activeSection.color,
+        }}
+        transition={{ duration: 0.3 }}
       >
-        {isPlaying ? 'STOP' : 'PLAY'} AMBIENT
-      </Button>
+        <div 
+          className="text-sm font-black uppercase tracking-wider text-center"
+          style={{ fontFamily: 'var(--font-cyber-mono)' }}
+        >
+          {activeSection.name}
+        </div>
+      </motion.div>
       
-      {isPlaying && (
+      <div className="flex gap-2">
         <Button
-          onClick={toggleMute}
+          onClick={toggleAudio}
           size="sm"
           variant="outline"
           className="cyber-button bg-background/80 backdrop-blur-sm border-2 border-foreground hover:bg-foreground hover:text-background"
+          style={{ fontFamily: 'var(--font-cyber-mono)' }}
         >
-          {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+          {isPlaying ? 'STOP' : 'PLAY'} AMBIENT
         </Button>
-      )}
+        
+        {isPlaying && (
+          <Button
+            onClick={toggleMute}
+            size="sm"
+            variant="outline"
+            className="cyber-button bg-background/80 backdrop-blur-sm border-2 border-foreground hover:bg-foreground hover:text-background"
+          >
+            {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

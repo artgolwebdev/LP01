@@ -1,4 +1,4 @@
-import { getMapImagePath, handleImageError, handleImageLoad } from "../utils/imageUtils";
+import { getMapImagePath } from "../utils/imageUtils";
 
 export default function Map() {
   return (
@@ -13,14 +13,15 @@ export default function Map() {
         
         <div className="relative">
           {/* Cyber District Map */}
-          <div className="w-full h-96 border-4 border-foreground relative overflow-hidden cyber-scan">
-            <img 
-              src={getMapImagePath()}
-              alt="Cyber District Map"
-              className="w-full h-full object-cover"
-              onError={handleImageError}
-              onLoad={handleImageLoad}
-            />
+          <div 
+            className="w-full h-96 border-4 border-foreground relative overflow-hidden cyber-scan"
+            style={{
+              backgroundImage: `url(${getMapImagePath()})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 to-magenta-400/5 pointer-events-none"></div>
           </div>
           
