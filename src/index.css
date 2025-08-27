@@ -5676,4 +5676,15 @@ html {
   #hero-video {
     min-height: 70%!important;
   }
+  section#about{
+    margin-top:-30%;
+  }
+
+}
+
+@media (max-width: 330px) {
+
+  section#about{
+    margin-top:-40%;
+  }
 }
