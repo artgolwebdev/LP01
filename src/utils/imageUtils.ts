@@ -1,5 +1,11 @@
 import React from 'react';
 
+// Import all assets
+import neonCityScene from '../assets/video/neot-city-scene.mp4';
+import heroVideoPoster from '../assets/video/hero-video-poster.svg';
+import cyberBrutalLogo from '../assets/logo/cyber-brutal-logo.svg';
+import cyberDistrictMap from '../assets/map/cyber-district-map.svg';
+
 // Image and video utility functions for handling placeholders and fallbacks
 
 export const getGalleryImagePath = (query: string): string => {
@@ -9,27 +15,27 @@ export const getGalleryImagePath = (query: string): string => {
 };
 
 export const getMapImagePath = (): string => {
-  return '/src/assets/map/cyber-district-map.svg';
+  return cyberDistrictMap;
 };
 
 export const getLogoPath = (): string => {
-  return '/src/assets/logo/cyber-brutal-logo.svg';
+  return cyberBrutalLogo;
 };
 
 export const getHeroVideoPath = (): string => {
-  return '/src/assets/video/hero-background.mp4';
+  return heroBackgroundMp4;
 };
 
 export const getHeroVideoWebmPath = (): string => {
-  return '/src/assets/video/hero-background.webm';
+  return heroBackgroundWebm;
 };
 
 export const getHeroVideoPosterPath = (): string => {
-  return '/src/assets/video/hero-video-poster.svg';
+  return heroVideoPoster;
 };
 
 export const getNeonCityScenePath = (): string => {
-  return '/src/assets/video/neot-city-scene.mp4';
+  return neonCityScene;
 };
 
 // Image loading error handler
