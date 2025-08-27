@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
-import { Volume2, VolumeX, Play, Square } from 'lucide-react';
+import { Volume2, VolumeX, Play, Square, ArrowUp } from 'lucide-react';
 import { useScrollSections } from './hooks/useScrollSections';
 import { getCyberCityAudioPath } from '../utils/imageUtils';
 
 export default function CyberAudio() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   
@@ -122,6 +123,28 @@ export default function CyberAudio() {
     }
   };
 
+  const scrollToTop = () => {
+    if ((window as any).cyberSounds) {
+      (window as any).cyberSounds.click();
+    }
+    
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  // Handle scroll to show/hide scroll to top button
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setShowScrollTop(scrollTop > 300); // Show after scrolling 300px
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Expose sound functions globally and cleanup on unmount
   useEffect(() => {
     (window as any).cyberSounds = {
@@ -159,6 +182,32 @@ export default function CyberAudio() {
       </motion.div>
       
       <div className="flex gap-2">
+        {/* Scroll to Top Button */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ 
+            opacity: showScrollTop ? 1 : 0,
+            scale: showScrollTop ? 1 : 0
+          }}
+          transition={{ duration: 0.3 }}
+        >
+          <Button
+            onClick={scrollToTop}
+            size="sm"
+            variant="outline"
+            className="cyber-button bg-background/80 backdrop-blur-sm border-2 border-foreground hover:bg-foreground hover:text-background"
+            style={{ fontFamily: 'var(--font-cyber-mono)' }}
+            whileHover={{
+              scale: 1.1,
+              boxShadow: "0 0 20px rgba(0, 255, 255, 0.8)",
+              rotate: -5
+            }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <ArrowUp size={16} />
+          </Button>
+        </motion.div>
+
         <Button
           onClick={toggleAudio}
           size="sm"

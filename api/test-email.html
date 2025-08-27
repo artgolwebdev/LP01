@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Test - Cyber City</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+        .test-section {
+            background-color: #1a1a1a;
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            color: #000000;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .button:hover {
+            opacity: 0.8;
+        }
+        .result {
+            background-color: #000000;
+            border: 1px solid #00ffff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .error {
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+        .success {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #00ffff; text-align: center;">🧪 Email Testing Tool - Cyber City</h1>
+    
+    <div class="test-section">
+        <h2 style="color: #ff00ff;">1. Test Configuration</h2>
+        <p>Check if your Mailgun configuration is working:</p>
+        <button class="button" onclick="testConfig()">Test Configuration</button>
+        <div id="config-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2 style="color: #ff00ff;">2. Test Simple HTML Email</h2>
+        <p>Send a simple HTML test email to verify HTML functionality:</p>
+        <button class="button" onclick="testEmail()">Send Test Email</button>
+        <div id="email-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2 style="color: #ff00ff;">3. Test Contact Form</h2>
+        <p>Test the actual contact form with sample data:</p>
+        <button class="button" onclick="testContactForm()">Test Contact Form</button>
+        <div id="contact-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2 style="color: #ff00ff;">Troubleshooting Tips</h2>
+        <ul>
+            <li>Check your spam/junk folder</li>
+            <li>Verify Mailgun domain and API key are correct</li>
+            <li>Check if your email client supports HTML emails</li>
+            <li>Try viewing the email in a different email client</li>
+            <li>Check the browser console for any JavaScript errors</li>
+        </ul>
+    </div>
+
+    <script>
+        async function testConfig() {
+            const resultDiv = document.getElementById('config-result');
+            resultDiv.innerHTML = 'Testing configuration...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await fetch('ContactFormHandler.php?debug=config');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = '✅ Configuration Test Successful!\n\n' + JSON.stringify(data.data, null, 2);
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = '❌ Configuration Test Failed!\n\n' + data.message;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        async function testEmail() {
+            const resultDiv = document.getElementById('email-result');
+            resultDiv.innerHTML = 'Sending test email...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await fetch('ContactFormHandler.php?debug=test-email');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = '✅ Test Email Sent Successfully!\n\n' + JSON.stringify(data.data, null, 2);
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = '❌ Test Email Failed!\n\n' + data.message;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        async function testContactForm() {
+            const resultDiv = document.getElementById('contact-result');
+            resultDiv.innerHTML = 'Testing contact form...';
+            resultDiv.className = 'result';
+            
+            const testData = {
+                name: 'Test User',
+                email: 'test@example.com',
+                phone: '+1234567890',
+                message: 'This is a test message from the email testing tool.'
+            };
+            
+            try {
+                const response = await fetch('ContactFormHandler.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = '✅ Contact Form Test Successful!\n\n' + JSON.stringify(data, null, 2);
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = '❌ Contact Form Test Failed!\n\n' + JSON.stringify(data, null, 2);
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html>

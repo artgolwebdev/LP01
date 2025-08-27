@@ -6,6 +6,9 @@
   export default defineConfig({
     base: '/LP01/',
     plugins: [react()],
+    define: {
+      'process.env.VITE_API_BASE_URL': JSON.stringify(process.env.VITE_API_BASE_URL || 'http://localhost/cursor/LP01/LP01/'),
+    },
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {

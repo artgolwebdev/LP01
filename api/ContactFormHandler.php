@@ -75,10 +75,15 @@ class ContactFormHandler
     public function handleRequest()
     {
         try {
-            // Debug endpoint
-            if (isset($_GET['debug']) && $_GET['debug'] === 'config') {
-                $this->debugConfig();
-                return;
+            // Debug endpoints
+            if (isset($_GET['debug'])) {
+                if ($_GET['debug'] === 'config') {
+                    $this->debugConfig();
+                    return;
+                } elseif ($_GET['debug'] === 'test-email') {
+                    $this->testEmail();
+                    return;
+                }
             }
             
             // Check if it's a POST request
@@ -197,7 +202,8 @@ class ContactFormHandler
             $subject,
             $body,
             $data['email'],
-            $data['name']
+            $data['name'],
+            true // Send as HTML
         );
     }
     
@@ -213,7 +219,10 @@ class ContactFormHandler
         return $this->sendMailgunEmail(
             $data['email'],
             $subject,
-            $body
+            $body,
+            null,
+            null,
+            true // Send as HTML
         );
     }
     
@@ -222,22 +231,158 @@ class ContactFormHandler
      */
     private function buildAdminEmailBody($data)
     {
-        $body = "New contact form submission received:\n\n";
-        $body .= "Name: " . htmlspecialchars($data['name']) . "\n";
-        $body .= "Email: " . htmlspecialchars($data['email']) . "\n";
+        $submissionTime = date('Y-m-d H:i:s');
+        $ipAddress = $_SERVER['REMOTE_ADDR'];
+        
+        $html = '
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>New Contact Form Submission</title>
+        </head>
+        <body style="margin: 0; padding: 20px; font-family: Arial, Helvetica, sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6;">
+            
+            <!-- Main Email Container -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0a0a;">
+                <tr>
+                    <td align="center" style="padding: 20px;">
+                        
+                        <!-- Email Card Container -->
+                        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #1a1a1a; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);">
+                            
+                            <!-- Header Section -->
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #00ffff 0%, #ff00ff 100%); padding: 30px; text-align: center;">
+                                    <h1 style="margin: 0; font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #000000; font-family: Arial, Helvetica, sans-serif;">
+                                        🚨 NEW CONTACT SUBMISSION 🚨
+                                    </h1>
+                                </td>
+                            </tr>
+                            
+                            <!-- Cyber City Title -->
+                            <tr>
+                                <td style="background-color: #000000; padding: 25px; text-align: center; border-bottom: 3px solid #00ffff;">
+                                    <h2 style="margin: 0; font-size: 28px; color: #00ffff; text-transform: uppercase; letter-spacing: 3px; font-weight: 900; font-family: Arial, Helvetica, sans-serif;">
+                                        CYBER CITY
+                                    </h2>
+                                    <div style="width: 120px; height: 3px; background: linear-gradient(90deg, #00ffff, #ff00ff); margin: 15px auto 0;"></div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Contact Details Card -->
+                            <tr>
+                                <td style="padding: 30px; background-color: #1a1a1a;">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td style="background-color: #000000; border: 2px solid #00ffff; border-radius: 12px; padding: 25px;">
+                                                <h3 style="margin: 0 0 20px 0; color: #00ffff; font-size: 20px; text-transform: uppercase; letter-spacing: 2px; font-weight: 900; font-family: Arial, Helvetica, sans-serif;">
+                                                    📋 CONTACT DETAILS
+                                                </h3>
+                                                
+                                                <table width="100%" cellpadding="8" cellspacing="0">
+                                                    <tr>
+                                                        <td width="120" style="color: #ff00ff; font-weight: bold; font-size: 14px; text-transform: uppercase;">NAME:</td>
+                                                        <td style="color: #ffffff; font-weight: bold; font-size: 16px;">' . htmlspecialchars($data['name']) . '</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="120" style="color: #ff00ff; font-weight: bold; font-size: 14px; text-transform: uppercase;">EMAIL:</td>
+                                                        <td style="color: #00ffff; font-weight: bold; font-size: 16px;">
+                                                            <a href="mailto:' . htmlspecialchars($data['email']) . '" style="color: #00ffff; text-decoration: none;">' . htmlspecialchars($data['email']) . '</a>
+                                                        </td>
+                                                    </tr>';
         
         if (!empty($data['phone'])) {
-            $body .= "Phone: " . htmlspecialchars($data['phone']) . "\n";
+            $html .= '
+                                                    <tr>
+                                                        <td width="120" style="color: #ff00ff; font-weight: bold; font-size: 14px; text-transform: uppercase;">PHONE:</td>
+                                                        <td style="color: #00ffff; font-weight: bold; font-size: 16px;">
+                                                            <a href="tel:' . htmlspecialchars($data['phone']) . '" style="color: #00ffff; text-decoration: none;">' . htmlspecialchars($data['phone']) . '</a>
+                                                        </td>
+                                                    </tr>';
         }
         
         if (!empty($data['message'])) {
-            $body .= "Message: " . htmlspecialchars($data['message']) . "\n";
+            $html .= '
+                                                    <tr>
+                                                        <td colspan="2" style="padding-top: 20px;">
+                                                            <div style="color: #ff00ff; font-weight: bold; font-size: 14px; text-transform: uppercase; margin-bottom: 10px;">MESSAGE:</div>
+                                                            <div style="background-color: #0a0a0a; border-left: 4px solid #00ffff; padding: 15px; border-radius: 4px; font-style: italic; line-height: 1.6; color: #ffffff; font-size: 14px;">
+                                                                "' . nl2br(htmlspecialchars($data['message'])) . '"
+                                                            </div>
+                                                        </td>
+                                                    </tr>';
         }
         
-        $body .= "\nSubmitted at: " . date('Y-m-d H:i:s') . "\n";
-        $body .= "IP Address: " . $_SERVER['REMOTE_ADDR'] . "\n";
+        $html .= '
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            
+                            <!-- Submission Info Card -->
+                            <tr>
+                                <td style="padding: 0 30px 30px;">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td style="background-color: #000000; border: 2px solid #ff00ff; border-radius: 12px; padding: 20px;">
+                                                <h4 style="margin: 0 0 15px 0; color: #ff00ff; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; font-weight: 900; font-family: Arial, Helvetica, sans-serif;">
+                                                    📊 SUBMISSION INFO
+                                                </h4>
+                                                <table width="100%" cellpadding="5" cellspacing="0">
+                                                    <tr>
+                                                        <td width="120" style="color: #ffffff; font-weight: bold; font-size: 14px;">TIME:</td>
+                                                        <td style="color: #ffffff; font-size: 14px;">' . $submissionTime . '</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="120" style="color: #ffffff; font-weight: bold; font-size: 14px;">IP ADDRESS (test):</td>
+                                                        <td style="color: #ffffff; font-size: 14px;">' . $ipAddress . '</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            
+                            <!-- Action Button -->
+                            <tr>
+                                <td style="padding: 0 30px 30px; text-align: center;">
+                                    <table cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                                        <tr>
+                                            <td style="background: linear-gradient(45deg, #00ffff, #0080ff); border-radius: 8px; padding: 15px 30px;">
+                                                <a href="mailto:' . htmlspecialchars($data['email']) . '?subject=Re: Your Cyber City Inquiry" style="color: #000000; text-decoration: none; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; font-family: Arial, Helvetica, sans-serif;">
+                                                    📧 REPLY TO CUSTOMER
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            
+                            <!-- Footer -->
+                            <tr>
+                                <td style="background-color: #000000; padding: 25px; text-align: center; border-top: 2px solid #00ffff;">
+                                    <p style="margin: 0; color: #888888; font-size: 12px; font-family: Arial, Helvetica, sans-serif;">
+                                        This notification was sent from the Cyber City contact form system.<br>
+                                        <span style="color: #00ffff; font-weight: bold;">⚡ POWERED BY CYBER TECHNOLOGY ⚡</span>
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                        </table>
+                        
+                    </td>
+                </tr>
+            </table>
+            
+        </body>
+        </html>';
         
-        return $body;
+        return $html;
     }
     
     /**
@@ -245,21 +390,145 @@ class ContactFormHandler
      */
     private function buildThankYouEmailBody($data)
     {
-        $body = "Dear " . htmlspecialchars($data['name']) . ",\n\n";
-        $body .= "Thank you for contacting Cyber City!\n\n";
-        $body .= "We have received your message and will get back to you as soon as possible.\n\n";
-        $body .= "Best regards,\n";
-        $body .= "The Cyber City Team\n\n";
-        $body .= "---\n";
-        $body .= "This is an automated response. Please do not reply to this email.";
+        $html = '
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Thank you for contacting Cyber City</title>
+        </head>
+        <body style="margin: 0; padding: 20px; font-family: Arial, Helvetica, sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6;">
+            
+            <!-- Main Email Container -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0a0a;">
+                <tr>
+                    <td align="center" style="padding: 20px;">
+                        
+                        <!-- Email Card Container -->
+                        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #1a1a1a; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);">
+                            
+                            <!-- Header Section -->
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #00ffff 0%, #ff00ff 50%, #ffff00 100%); padding: 35px; text-align: center;">
+                                    <h1 style="margin: 0; font-size: 36px; font-weight: 900; text-transform: uppercase; letter-spacing: 5px; color: #000000; font-family: Arial, Helvetica, sans-serif;">
+                                        CYBER CITY
+                                    </h1>
+                                </td>
+                            </tr>
+                            
+                            <!-- Thank You Message Card -->
+                            <tr>
+                                <td style="padding: 40px; background-color: #1a1a1a;">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td style="background-color: #000000; border: 3px solid #00ffff; border-radius: 15px; padding: 35px; text-align: center;">
+                                                
+                                                <div style="font-size: 48px; margin-bottom: 25px;">🎉</div>
+                                                
+                                                <h2 style="margin: 0 0 25px 0; color: #00ffff; font-size: 32px; text-transform: uppercase; letter-spacing: 3px; font-weight: 900; font-family: Arial, Helvetica, sans-serif;">
+                                                    THANK YOU, ' . strtoupper(htmlspecialchars($data['name'])) . '!
+                                                </h2>
+                                                
+                                                <div style="width: 150px; height: 3px; background: linear-gradient(90deg, #00ffff, #ff00ff, #ffff00); margin: 25px auto; border-radius: 2px;"></div>
+                                                
+                                                <p style="font-size: 18px; line-height: 1.6; margin-bottom: 30px; color: #ffffff; font-weight: bold;">
+                                                    Your message has been successfully transmitted to our cyber network! 🚀
+                                                </p>
+                                                
+                                                <div style="background-color: #0a0a0a; border-left: 5px solid #00ffff; padding: 25px; border-radius: 8px; margin: 30px 0;">
+                                                    <p style="margin: 0; font-size: 16px; color: #ffffff; font-style: italic; line-height: 1.6;">
+                                                        "We have received your inquiry and our digital agents are processing your request. 
+                                                        You can expect a response within 24-48 hours."
+                                                    </p>
+                                                </div>
+                                                
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            
+                            <!-- Status Indicators -->
+                            <tr>
+                                <td style="padding: 0 40px 40px;">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td style="text-align: center;">
+                                                <table cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                                                    <tr>
+                                                        <td style="text-align: center; padding: 0 20px;">
+                                                            <div style="width: 60px; height: 60px; background: linear-gradient(45deg, #00ff00, #00ffff); border-radius: 50%; display: inline-block; margin-bottom: 10px; line-height: 60px; font-size: 24px; color: #000000; font-weight: bold;">✓</div>
+                                                            <p style="margin: 0; color: #00ff00; font-weight: bold; text-transform: uppercase; font-size: 12px;">MESSAGE SENT</p>
+                                                        </td>
+                                                        <td style="text-align: center; padding: 0 20px;">
+                                                            <div style="width: 60px; height: 60px; background: linear-gradient(45deg, #ff00ff, #ffff00); border-radius: 50%; display: inline-block; margin-bottom: 10px; line-height: 60px; font-size: 24px; color: #000000; font-weight: bold;">⚡</div>
+                                                            <p style="margin: 0; color: #ff00ff; font-weight: bold; text-transform: uppercase; font-size: 12px;">PROCESSING</p>
+                                                        </td>
+                                                        <td style="text-align: center; padding: 0 20px;">
+                                                            <div style="width: 60px; height: 60px; background: linear-gradient(45deg, #ffff00, #00ffff); border-radius: 50%; display: inline-block; margin-bottom: 10px; line-height: 60px; font-size: 24px; color: #000000; font-weight: bold;">📧</div>
+                                                            <p style="margin: 0; color: #ffff00; font-weight: bold; text-transform: uppercase; font-size: 12px;">RESPONSE SOON</p>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            
+                            <!-- Contact Information -->
+                            <tr>
+                                <td style="padding: 0 40px 40px;">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td style="background-color: #000000; border: 2px solid #ff00ff; border-radius: 15px; padding: 25px; text-align: center;">
+                                                <h3 style="margin: 0 0 15px 0; color: #ff00ff; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; font-weight: 900; font-family: Arial, Helvetica, sans-serif;">
+                                                    📞 NEED IMMEDIATE ASSISTANCE?
+                                                </h3>
+                                                <p style="margin: 0; color: #ffffff; font-size: 14px; line-height: 1.6;">
+                                                    For urgent matters, feel free to reach out through our other communication channels.
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            
+                            <!-- Footer -->
+                            <tr>
+                                <td style="background-color: #000000; padding: 30px; text-align: center; border-top: 2px solid #00ffff;">
+                                    <p style="margin: 0 0 15px 0; color: #888888; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">
+                                        <strong style="color: #00ffff;">CYBER CITY TEAM</strong><br>
+                                        Creating digital experiences that transcend reality
+                                    </p>
+                                    <div style="margin: 20px 0;">
+                                        <span style="display: inline-block; width: 30px; height: 2px; background: #00ffff; margin: 0 10px;"></span>
+                                        <span style="color: #00ffff; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">⚡ POWERED BY CYBER TECHNOLOGY ⚡</span>
+                                        <span style="display: inline-block; width: 30px; height: 2px; background: #00ffff; margin: 0 10px;"></span>
+                                    </div>
+                                    <p style="margin: 0; color: #666666; font-size: 11px; font-style: italic;">
+                                        This is an automated response. Please do not reply to this email.
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                        </table>
+                        
+                    </td>
+                </tr>
+            </table>
+            
+        </body>
+        </html>';
         
-        return $body;
+        return $html;
     }
     
     /**
      * Send email via Mailgun API
      */
-    private function sendMailgunEmail($to, $subject, $body, $replyTo = null, $replyToName = null)
+    private function sendMailgunEmail($to, $subject, $body, $replyTo = null, $replyToName = null, $isHtml = false)
     {
         // Debug: Check configuration values
         error_log("Mailgun Debug - Domain: " . $this->mailgunDomain);
@@ -284,27 +553,33 @@ class ContactFormHandler
         $postData = [
             'from' => "{$this->fromName} <{$this->fromEmail}>",
             'to' => $to,
-            'subject' => $subject,
-            'text' => $body
+            'subject' => $subject
         ];
+        
+        if ($isHtml) {
+            $postData['html'] = $body;
+            // Also include plain text version for email clients that don't support HTML
+            $postData['text'] = strip_tags($body);
+        } else {
+            $postData['text'] = $body;
+        }
         
         if ($replyTo) {
             $postData['h:Reply-To'] = $replyToName ? "{$replyToName} <{$replyTo}>" : $replyTo;
         }
         
         // Debug: Log post data (without sensitive info)
-        error_log("Mailgun Debug - Post Data: " . json_encode(array_merge($postData, ['text' => '[MESSAGE CONTENT HIDDEN]'])));
+        error_log("Mailgun Debug - Post Data: " . json_encode(array_merge($postData, ['html' => '[HTML CONTENT HIDDEN]', 'text' => '[TEXT CONTENT HIDDEN]'])));
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Authorization: Basic ' . base64_encode('api:' . $this->mailgunApiKey),
-            'Content-Type: application/x-www-form-urlencoded'
+            'Authorization: Basic ' . base64_encode('api:' . $this->mailgunApiKey)
         ]);
         
         $response = curl_exec($ch);
@@ -369,6 +644,61 @@ class ContactFormHandler
         ];
         
         $this->sendResponse(200, 'Configuration debug info', $debug);
+    }
+    
+    /**
+     * Test email method to debug HTML email sending
+     */
+    public function testEmail()
+    {
+        $testData = [
+            'name' => 'Test User',
+            'email' => $this->adminEmail, // Send to admin email for testing
+            'phone' => '+1234567890',
+            'message' => 'This is a test message to verify HTML email functionality.'
+        ];
+        
+        // Test simple HTML email first
+        $simpleHtml = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Test Email</title>
+        </head>
+        <body style="background-color: #000000; color: #ffffff; font-family: Arial, sans-serif; padding: 20px;">
+            <h1 style="color: #00ffff;">🧪 HTML EMAIL TEST 🧪</h1>
+            <p style="color: #ff00ff; font-size: 18px;">If you can see this colored text, HTML emails are working!</p>
+            <div style="background-color: #1a1a1a; border: 2px solid #00ffff; padding: 20px; margin: 20px 0;">
+                <h2 style="color: #00ffff;">Test Details:</h2>
+                <p><strong>Name:</strong> ' . $testData['name'] . '</p>
+                <p><strong>Email:</strong> ' . $testData['email'] . '</p>
+                <p><strong>Phone:</strong> ' . $testData['phone'] . '</p>
+                <p><strong>Message:</strong> ' . $testData['message'] . '</p>
+                <p><strong>Time:</strong> ' . date('Y-m-d H:i:s') . '</p>
+            </div>
+            <p style="color: #ffff00;">⚡ This is a test email from Cyber City ⚡</p>
+        </body>
+        </html>';
+        
+        $result = $this->sendMailgunEmail(
+            $this->adminEmail,
+            '🧪 HTML Email Test - Cyber City',
+            $simpleHtml,
+            null,
+            null,
+            true // Send as HTML
+        );
+        
+        if ($result) {
+            $this->sendResponse(200, 'Test email sent successfully! Check your inbox.', [
+                'sent_to' => $this->adminEmail,
+                'html_content_length' => strlen($simpleHtml),
+                'timestamp' => date('Y-m-d H:i:s')
+            ]);
+        } else {
+            $this->sendResponse(500, 'Failed to send test email. Check logs for details.');
+        }
     }
 }
 

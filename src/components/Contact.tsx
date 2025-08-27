@@ -1,7 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
+
+// API configuration
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost/artgolwebdev/LP01';
+const API_ENDPOINT = `${API_BASE_URL}/api/ContactFormHandler.php`;
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -40,7 +44,8 @@ export default function Contact() {
     setStatusMessage('');
 
     try {
-      const response = await fetch('/api/ContactFormHandler.php', {
+      console.log('Sending request to:', API_ENDPOINT);
+      const response = await fetch(API_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
