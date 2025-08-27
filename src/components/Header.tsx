@@ -232,7 +232,7 @@ export default function Header() {
 
       {/* Section indicator */}
       <motion.div
-        className="absolute top-1/2 transform -translate-y-1/2 left-1"
+        className="absolute top-1/2 transform -translate-y-1/2 left-1 hidden sm:block"
         animate={{
           opacity: isScrolled ? 1 : 0,
         }}
