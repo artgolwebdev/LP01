@@ -1,96 +1,54 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, Play, Square } from 'lucide-react';
 import { useScrollSections } from './hooks/useScrollSections';
+import { getCyberCityAudioPath } from '../utils/imageUtils';
 
 export default function CyberAudio() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const oscillatorRef = useRef<OscillatorNode | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
   
   // Get active section for mobile menu indicator
   const { activeSection } = useScrollSections();
 
-  const createAmbientSound = () => {
-    if (audioContextRef.current) {
-      audioContextRef.current.close();
-    }
-
-    audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const audioContext = audioContextRef.current;
-
-    // Create oscillator for ambient drone
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    const filter = audioContext.createBiquadFilter();
-
-    oscillator.type = 'sawtooth';
-    oscillator.frequency.setValueAtTime(55, audioContext.currentTime); // Low bass frequency
-    
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(200, audioContext.currentTime);
-    filter.Q.setValueAtTime(10, audioContext.currentTime);
-
-    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-
-    oscillator.connect(filter);
-    filter.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillatorRef.current = oscillator;
-    gainNodeRef.current = gainNode;
-
-    // Add subtle frequency modulation
-    const lfo = audioContext.createOscillator();
-    const lfoGain = audioContext.createGain();
-    
-    lfo.type = 'sine';
-    lfo.frequency.setValueAtTime(0.1, audioContext.currentTime);
-    lfoGain.gain.setValueAtTime(10, audioContext.currentTime);
-    
-    lfo.connect(lfoGain);
-    lfoGain.connect(oscillator.frequency);
-    
-    oscillator.start();
-    lfo.start();
-  };
-
-  const toggleAudio = () => {
-    if (isPlaying) {
-      if (audioContextRef.current) {
-        audioContextRef.current.suspend();
-      }
-      setIsPlaying(false);
-    } else {
-      if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
-        createAmbientSound();
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.resume();
-      }
-      setIsPlaying(true);
+  // Initialize Web Audio API for sound effects
+  const initializeAudioContext = () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
   };
 
-  const toggleMute = () => {
-    if (gainNodeRef.current) {
-      if (isMuted) {
-        gainNodeRef.current.gain.setValueAtTime(0.1, audioContextRef.current!.currentTime);
-      } else {
-        gainNodeRef.current.gain.setValueAtTime(0, audioContextRef.current!.currentTime);
-      }
-      setIsMuted(!isMuted);
+  // Initialize background music
+  const initializeBackgroundMusic = () => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(getCyberCityAudioPath());
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.3; // Set initial volume to 30%
+      
+      // Add event listeners
+      audioRef.current.addEventListener('ended', () => {
+        setIsPlaying(false);
+      });
+      
+      audioRef.current.addEventListener('error', (e) => {
+        console.error('Audio error:', e);
+        setIsPlaying(false);
+      });
     }
   };
 
   // Sound effect functions
   const playClickSound = () => {
-    if (!audioContextRef.current) return;
+    if (!audioContextRef.current) {
+      initializeAudioContext();
+    }
     
     const audioContext = audioContextRef.current;
+    if (!audioContext) return;
+    
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
     
@@ -109,9 +67,13 @@ export default function CyberAudio() {
   };
 
   const playHoverSound = () => {
-    if (!audioContextRef.current) return;
+    if (!audioContextRef.current) {
+      initializeAudioContext();
+    }
     
     const audioContext = audioContextRef.current;
+    if (!audioContext) return;
+    
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
     
@@ -128,7 +90,39 @@ export default function CyberAudio() {
     oscillator.stop(audioContext.currentTime + 0.2);
   };
 
-  // Expose sound functions globally
+  const toggleAudio = () => {
+    if (!audioRef.current) {
+      initializeBackgroundMusic();
+    }
+
+    if (isPlaying) {
+      // Stop background music
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      setIsPlaying(false);
+      setIsMuted(false);
+    } else {
+      // Play background music
+      if (audioRef.current) {
+        audioRef.current.play().catch((error) => {
+          console.error('Failed to play audio:', error);
+          setIsPlaying(false);
+        });
+      }
+      setIsPlaying(true);
+    }
+  };
+
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  // Expose sound functions globally and cleanup on unmount
   useEffect(() => {
     (window as any).cyberSounds = {
       click: playClickSound,
@@ -136,6 +130,10 @@ export default function CyberAudio() {
     };
 
     return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
@@ -168,7 +166,17 @@ export default function CyberAudio() {
           className="cyber-button bg-background/80 backdrop-blur-sm border-2 border-foreground hover:bg-foreground hover:text-background"
           style={{ fontFamily: 'var(--font-cyber-mono)' }}
         >
-          {isPlaying ? 'STOP' : 'PLAY'} AMBIENT
+          {isPlaying ? (
+            <>
+              <Square size={16} />
+              STOP AMBIENT
+            </>
+          ) : (
+            <>
+              <Play size={16} />
+              PLAY AMBIENT
+            </>
+          )}
         </Button>
         
         {isPlaying && (

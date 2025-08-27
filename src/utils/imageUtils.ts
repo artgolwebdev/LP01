@@ -6,6 +6,9 @@ import heroVideoPoster from '../assets/video/hero-video-poster.svg';
 //import cyberCityLogo from '../assets/logo/cyber-city-logo.svg';
 import cyberDistrictMap from '../assets/map/cyber-district-map.svg';
 
+// Import audio files
+import cyberCityAudio from '../assets/audio/CyberCity.wav';
+
 // Import gallery images
 import futuristicTechnology from '../assets/gallery/futuristic-technology.png';
 import cyberArchitecture from '../assets/gallery/cyber-architecture.png';
@@ -52,6 +55,10 @@ export const getHeroVideoPosterPath = (): string => {
 
 export const getNeonCityScenePath = (): string => {
   return neonCityScene;
+};
+
+export const getCyberCityAudioPath = (): string => {
+  return cyberCityAudio;
 };
 
 // Image loading error handler
