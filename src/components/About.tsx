@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { useScrollAnimation, useStaggeredAnimation } from "./hooks/useScrollAnimation";
 import { getGalleryImagePath } from "../utils/imageUtils";
+import ImagePopup from "./ImagePopup";
 
 const services = [
   {
@@ -53,11 +54,42 @@ export default function About() {
   const { ref: servicesRef, visibleItems: serviceItems } = useStaggeredAnimation(services.length, 0.15);
   const { ref: galleryRef, visibleItems: galleryVisibleItems } = useStaggeredAnimation(galleryItems.length, 0.1);
 
+  // State for image popup
+  const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   const handleHover = () => {
     if ((window as any).cyberSounds) {
       (window as any).cyberSounds.hover();
     }
   };
+
+  const handleImageClick = (query: string) => {
+    if ((window as any).cyberSounds) {
+      (window as any).cyberSounds.click();
+    }
+    const imageSrc = getGalleryImagePath(query);
+    const imageAlt = query.replace(/([A-Z])/g, ' $1').trim(); // Convert camelCase to readable text
+    setSelectedImage({ src: imageSrc, alt: imageAlt });
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setTimeout(() => setSelectedImage(null), 300); // Clear after animation
+  };
+
+  // Add keyboard event listener for ESC key
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isPopupOpen) {
+        handleClosePopup();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isPopupOpen]);
 
   return (
     <section id="about" className="py-24 bg-foreground text-background relative overflow-hidden">
@@ -244,6 +276,7 @@ export default function About() {
                   boxShadow: "0 20px 40px rgba(0, 255, 255, 0.3)"
                 }}
                 onMouseEnter={handleHover}
+                onClick={() => item.type === 'image' && item.query && handleImageClick(item.query)}
               >
                 {item.type === 'image' ? (
                   <div 
@@ -256,6 +289,44 @@ export default function About() {
                     }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 to-magenta-400/10 pointer-events-none"></div>
+                    
+                    {/* Click to view overlay */}
+                    <motion.div
+                      className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                    >
+                      <div className="text-center">
+                        <motion.div
+                          className="w-16 h-16 border-2 border-cyan-400 rounded-full flex items-center justify-center mx-auto mb-2"
+                          whileHover={{ scale: 1.1, rotate: 90 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-cyan-400"
+                          >
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                            <path d="M11 8v6"></path>
+                            <path d="M8 11h6"></path>
+                          </svg>
+                        </motion.div>
+                        <p 
+                          className="text-cyan-400 uppercase tracking-wider text-xs font-bold"
+                          style={{ fontFamily: 'var(--font-cyber-mono)' }}
+                        >
+                          CLICK TO VIEW
+                        </p>
+                      </div>
+                    </motion.div>
                   </div>
                 ) : (
                   <div className="w-full h-full p-4 flex flex-col justify-center bg-gradient-to-br from-background/10 to-transparent">
@@ -345,6 +416,16 @@ export default function About() {
           />
         ))}
       </div>
+
+      {/* Image Popup */}
+      {selectedImage && (
+        <ImagePopup
+          isOpen={isPopupOpen}
+          onClose={handleClosePopup}
+          imageSrc={selectedImage.src}
+          imageAlt={selectedImage.alt}
+        />
+      )}
     </section>
   );
 }

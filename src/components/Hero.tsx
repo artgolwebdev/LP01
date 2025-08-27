@@ -8,6 +8,21 @@ export default function Hero() {
     }
   };
 
+  const handleTitleClick = () => {
+    if ((window as any).cyberSounds) {
+      (window as any).cyberSounds.click();
+    }
+    
+    // Smooth scroll to About section
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <section 
       id="hero" 
@@ -47,10 +62,11 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
         <div className="space-y-8">
           <h1 
-            className="text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-wider leading-none cyber-glow cyber-glitch interactive-element"
+            className="text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-wider leading-none cyber-glow cyber-glitch interactive-element cursor-pointer"
             style={{ fontFamily: 'var(--font-cyber-display)' }}
             data-text="CYBER CITY"
             onMouseEnter={handleHover}
+            onClick={handleTitleClick}
           >
             CYBER
             <br />
