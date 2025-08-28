@@ -135,7 +135,7 @@ export default function Hero() {
              minHeight: '100%',
              width: 'auto',
              height: 'auto',
-             objectFit: 'fill'
+             objectFit: 'cover'
            }}
          >
            <source src={getNeonCityScenePath()} type="video/mp4" />

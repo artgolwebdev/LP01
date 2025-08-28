@@ -5664,7 +5664,7 @@ html {
   min-height: 100%;
   width: auto;
   height: auto;
-  object-fit: fill;
+  object-fit: cover;
 } 
 
 
@@ -5673,18 +5673,5 @@ html {
   #hero-video-container{
     background-color: #0a0a0a;
   }
-  #hero-video {
-    min-height: 60%!important;
-  }
-  section#about{
-    margin-top:-30%;
-  }
-
 }
 
-@media (max-width: 330px) {
-
-  section#about{
-    margin-top:-40%;
-  }
-}
